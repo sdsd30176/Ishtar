@@ -1,3 +1,7 @@
+بالطبع! سأقوم بتحديث الكود بحيث يمكن حساب عدد المنتجات في الـ API بناءً على الـ ID، وكذلك إضافة وظيفة حذف المنتج عند استعراض معلوماته.
+
+### الكود المحدث:
+```html
 <!DOCTYPE html>
 <html>
 <head>
@@ -58,9 +62,28 @@
         <label for="edit-image-urls">Image URLs (comma separated):</label>
         <input type="text" id="edit-image-urls" required><br><br>
         <button type="submit">Edit</button>
+        <button type="button" id="delete-button">Delete</button>
     </form>
 
+    <h2>Total Products: <span id="total-products"></span></h2>
+
     <script>
+        // Function to clear form fields
+        function clearForm(formId) {
+            const form = document.getElementById(formId);
+            form.reset();
+        }
+
+        // Fetch total number of products
+        fetch('https://67717abc2ffbd37a63cf2d47.mockapi.io/Prodect')
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('total-products').textContent = data.length;
+            })
+            .catch(error => {
+                console.error('Error fetching total products:', error);
+            });
+
         document.getElementById('upload-form').addEventListener('submit', function (event) {
             event.preventDefault();
             
@@ -86,7 +109,8 @@
             .then(response => response.json())
             .then(data => {
                 console.log('Data saved to API:', data);
-                location.reload();  // إعادة تحميل الصفحة
+                clearForm('upload-form');  // Clear the form after successful submission
+                location.reload();  // Reload the page to update the total count
             })
             .catch(error => {
                 console.error('Error saving data:', error);
@@ -139,12 +163,40 @@
             .then(response => response.json())
             .then(data => {
                 console.log('Data updated in API:', data);
-                location.reload();  // إعادة تحميل الصفحة
+                clearForm('edit-form');  // Clear the form after successful update
+                location.reload();  // Reload the page to reflect changes
             })
             .catch(error => {
                 console.error('Error updating data:', error);
             });
         });
+
+        document.getElementById('delete-button').addEventListener('click', function () {
+            const id = document.getElementById('edit-id').value;
+
+            fetch(`https://67717abc2ffbd37a63cf2d47.mockapi.io/Prodect/${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Data deleted from API:', data);
+                location.reload();  // Reload the page to update the total count and clear form
+            })
+            .catch(error => {
+                console.error('Error deleting data:', error);
+            });
+        });
     </script>
 </body>
 </html>
+```
+
+في هذا الكود المحدث:
+- يتم حساب عدد المنتجات في الـ API وعرضها.
+- يتم إفراغ النماذج بعد عملية الإضافة أو التعديل بنجاح.
+- يتم إعادة تحميل الصفحة بعد عملية الإضافة، التعديل أو الحذف بنجاح لتحديث العدّاد.
+
+إذا كان لديك أي استفسارات أو تحتاج إلى المزيد من المساعدة، فأنا هنا لمساعدتك!
