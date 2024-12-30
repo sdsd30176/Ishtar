@@ -1,0 +1,312 @@
+
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>إدارة المستخدمين</title>
+</head>
+
+<style>
+body {
+    font-family: Arial, sans-serif;
+    direction: rtl;
+    text-align: right;
+    background-color: #f4f4f9;
+    color: #333;
+    margin: 0;
+    padding: 0;
+}
+
+header {
+    background-color: #007FFF;
+    color: #fff;
+    text-align: center;
+    padding: 20px 0;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.button-container {
+    display: flex;
+    justify-content: center;
+    margin: 20px 0;
+}
+
+.action-button {
+    margin: 0 10px;
+    padding: 10px 20px;
+    background-color: #007FFF;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.action-button:hover {
+    background-color: #0056b3;
+}
+
+.container, .formsContainer {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+label {
+    font-size: 16px;
+}
+
+input {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+button[type="submit"], button[type="button"] {
+    display: inline-block;
+    width: 100%;
+    padding: 15px;
+    background-color: #007FFF;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s;
+}
+
+button[type="submit"]:hover, button[type="button"]:hover {
+    background-color: #0056b3;
+}
+</style>
+<body>
+    <header>إدارة المستخدمين</header>
+    <div class="button-container">
+        <button id="addUserButton" class="action-button">إضافة مستخدم</button>
+        <button id="editUserButton" class="action-button">تعديل/حذف مستخدم</button>
+    </div>
+    <div id="formsContainer">
+        <form id="userForm" style="display:none;">
+            <h1>إضافة معلومات إلى الـ API</h1>
+            <label for="name">الاسم:</label>
+            <input type="text" id="name" name="name" required>
+            <br>
+            <label for="address">العنوان:</label>
+            <input type="text" id="address" name="address" required>
+            <br>
+            <label for="username">اليوزر:</label>
+            <input type="text" id="username" name="username" required>
+            <br>
+            <label for="password">الباسورد:</label>
+            <input type="password" id="password" name="password" required>
+            <br>
+            <label for="successfulOrders">الطلبات الناجحة:</label>
+            <input type="number" id="successfulOrders" name="successfulOrders" required>
+            <br>
+            <label for="pendingOrders">الطلبات المعلقة:</label>
+            <input type="number" id="pendingOrders" name="pendingOrders" required>
+            <br>
+            <label for="balance">الرصيد:</label>
+            <input type="number" id="balance" name="balance" required>
+            <br>
+            <button type="submit">إضافة</button>
+        </form>
+
+        <form id="fetchUserForm" style="display:none;">
+            <h1>جلب معلومات مستخدم معين</h1>
+            <label for="userId">ID المستخدم:</label>
+            <input type="text" id="userId" name="userId" required>
+            <button type="submit">جلب المعلومات</button>
+        </form>
+
+        <div id="userInfo" style="display:none;"></div>
+
+        <form id="updateUserForm" style="display:none;">
+            <h1>تعديل معلومات المستخدم</h1>
+            <input type="hidden" id="updateUserId">
+            <label for="updateName">الاسم:</label>
+            <input type="text" id="updateName" name="updateName" required>
+            <br>
+            <label for="updateAddress">العنوان:</label>
+            <input type="text" id="updateAddress" name="updateAddress" required>
+            <br>
+            <label for="updateUsername">اليوزر:</label>
+            <input type="text" id="updateUsername" name="updateUsername" required>
+            <br>
+            <label for="updatePassword">الباسورد:</label>
+            <input type="password" id="updatePassword" name="updatePassword" required>
+            <br>
+            <label for="updateSuccessfulOrders">الطلبات الناجحة:</label>
+            <input type="number" id="updateSuccessfulOrders" name="updateSuccessfulOrders" required>
+            <br>
+            <label for="updatePendingOrders">الطلبات المعلقة:</label>
+            <input type="number" id="updatePendingOrders" name="updatePendingOrders" required>
+            <br>
+            <label for="updateBalance">الرصيد:</label>
+            <input type="number" id="updateBalance" name="updateBalance" required>
+            <br>
+            <button type="submit">تعديل المعلومات</button>
+            <button type="button" id="deleteUserButton">حذف المستخدم</button>
+        </form>
+    </div>
+
+    <script>
+
+
+document.getElementById('addUserButton').addEventListener('click', function() {
+    document.getElementById('userForm').style.display = 'block';
+    document.getElementById('fetchUserForm').style.display = 'none';
+    document.getElementById('updateUserForm').style.display = 'none';
+    document.getElementById('userInfo').style.display = 'none';
+});
+
+document.getElementById('editUserButton').addEventListener('click', function() {
+    document.getElementById('userForm').style.display = 'none';
+    document.getElementById('fetchUserForm').style.display = 'block';
+    document.getElementById('updateUserForm').style.display = 'none';
+    document.getElementById('userInfo').style.display = 'none';
+});
+
+document.getElementById('userForm').addEventListener('submit', function(event) {
+    event.preventDefault();
+
+    const name = document.getElementById('name').value;
+    const address = document.getElementById('address').value;
+    const username = document.getElementById('username').value;
+    const password = document.getElementById('password').value;
+    const successfulOrders = document.getElementById('successfulOrders').value;
+    const pendingOrders = document.getElementById('pendingOrders').value;
+    const balance = document.getElementById('balance').value;
+
+    const data = {
+        name: name,
+        address: address,
+        username: username,
+        password: password,
+        successfulOrders: successfulOrders,
+        pendingOrders: pendingOrders,
+        balance: balance
+    };
+
+    fetch('https://67717abc2ffbd37a63cf2d47.mockapi.io/User', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => response.json())
+    .then(data => {
+        alert('تمت إضافة المعلومات بنجاح!');
+        console.log('Success:', data);
+    })
+    .catch((error) => {
+        alert('حدث خطأ أثناء إضافة المعلومات.');
+        console.error('Error:', error);
+    });
+});
+
+document.getElementById('fetchUserForm').addEventListener('submit', function(event) {
+    event.preventDefault();
+    const userId = document.getElementById('userId').value;
+
+    fetch(`https://67717abc2ffbd37a63cf2d47.mockapi.io/User/${userId}`)
+        .then(response => response.json())
+        .then(user => {
+            document.getElementById('userInfo').innerHTML = `
+                <p>الاسم: ${user.name}</p>
+                <p>العنوان: ${user.address}</p>
+                <p>اليوزر: ${user.username}</p>
+                <p>الباسورد: ${user.password}</p>
+                <p>الطلبات الناجحة: ${user.successfulOrders}</p>
+                <p>الطلبات المعلقة: ${user.pendingOrders}</p>
+                <p>الرصيد: ${user.balance}</p>
+            `;
+            document.getElementById('userInfo').style.display = 'block';
+            document.getElementById('updateUserForm').style.display = 'block';
+
+            document.getElementById('updateUserId').value = user.id;
+            document.getElementById('updateName').value = user.name;
+            document.getElementById('updateAddress').value = user.address;
+            document.getElementById('updateUsername').value = user.username;
+            document.getElementById('updatePassword').value = user.password;
+            document.getElementById('updateSuccessfulOrders').value = user.successfulOrders;
+            document.getElementById('updatePendingOrders').value = user.pendingOrders;
+            document.getElementById('updateBalance').value = user.balance;
+        })
+        .catch(error => console.error('خطأ في جلب بيانات المستخدم:', error));
+});
+
+document.getElementById('updateUserForm').addEventListener('submit', function(event) {
+    event.preventDefault();
+
+    const userId = document.getElementById('updateUserId').value;
+    const name = document.getElementById('updateName').value;
+    const address = document.getElementById('updateAddress').value;
+    const username = document.getElementById('updateUsername').value;
+    const password = document.getElementById('updatePassword').value;
+    const successfulOrders = document.getElementById('updateSuccessfulOrders').value;
+    const pendingOrders = document.getElementById('updatePendingOrders').value;
+    const balance = document.getElementById('updateBalance').value;
+
+    const data = {
+        name: name,
+        address: address,
+        username: username,
+        password: password,
+        successfulOrders: successfulOrders,
+        pendingOrders: pendingOrders,
+        balance: balance
+    };
+
+    fetch(`https://67717abc2ffbd37a63cf2d47.mockapi.io/User/${userId}`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => response.json())
+    .then(data => {
+        alert('تم تعديل المعلومات بنجاح!');
+        console.log('Success:', data);
+    })
+    .catch((error) => {
+        alert('حدث خطأ أثناء تعديل المعلومات.');
+        console.error('Error:', error);
+    });
+});
+
+document.getElementById('deleteUserButton').addEventListener('click', function() {
+    const userId = document.getElementById('updateUserId').value;
+
+    fetch(`https://67717abc2ffbd37a63cf2d47.mockapi.io/User/${userId}`, {
+        method: 'DELETE',
+    })
+    .then(response => response.json())
+    .then(data => {
+        alert('تم حذف المستخدم بنجاح!');
+        console.log('Success:', data);
+        document.getElementById('updateUserForm').style.display = 'none';
+        document.getElementById('userInfo').style.display = 'none';
+    })
+    .catch((error) => {
+        alert('حدث خطأ أثناء حذف المستخدم.');
+        console.error('Error:', error);
+    });
+});
+
+
+    </script>
+</body>
+</html>
