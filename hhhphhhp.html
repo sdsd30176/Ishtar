@@ -26,15 +26,17 @@
 <body>
     <h2>Upload New Data</h2>
     <form id="upload-form">
-        <label for="name">Name:</label>
+        <label for="name">الاسم:</label>
         <input type="text" id="name" required><br><br>
-        <label for="minPrice">Minimum Price:</label>
+        <label for="minPrice">السعر الادنى:</label>
         <input type="number" id="minPrice" required><br><br>
-        <label for="maxPrice">Maximum Price:</label>
+        <label for="maxPrice">السعر الاعلى:</label>
         <input type="number" id="maxPrice" required><br><br>
-        <label for="description">Description:</label>
+        <label for="description">الوصف:</label>
         <textarea id="description" required></textarea><br><br>
-        <label for="image-urls">Image URLs (comma separated):</label>
+        <label for="profit">الربح:</label>
+        <input type="text" id="profit" required><br><br>
+        <label for="image-urls">الصور:</label>
         <input type="text" id="image-urls" required><br><br>
         <button type="submit">Upload</button>
     </form>
@@ -56,6 +58,8 @@
         <input type="number" id="edit-maxPrice" required><br><br>
         <label for="edit-description">Description:</label>
         <textarea id="edit-description" required></textarea><br><br>
+        <label for="edit-profit">الربح:</label>
+        <input type="text" id="edit-profit" required><br><br>
         <label for="edit-image-urls">Image URLs (comma separated):</label>
         <input type="text" id="edit-image-urls" required><br><br>
         <button type="submit">Edit</button>
@@ -88,6 +92,7 @@
             const minPrice = document.getElementById('minPrice').value;
             const maxPrice = document.getElementById('maxPrice').value;
             const description = document.getElementById('description').value;
+            const profit = document.getElementById('profit').value;
             const imageUrls = document.getElementById('image-urls').value.split(',').map(url => url.trim());
             
             fetch('https://67717abc2ffbd37a63cf2d47.mockapi.io/Prodect', {
@@ -100,6 +105,7 @@
                     minPrice: minPrice,
                     maxPrice: maxPrice,
                     description: description,
+                    profit: profit,
                     images: imageUrls
                 })
             })
@@ -124,6 +130,7 @@
                     document.getElementById('edit-name').value = data.name;
                     document.getElementById('edit-minPrice').value = data.minPrice;
                     document.getElementById('edit-maxPrice').value = data.maxPrice;
+                    document.getElementById('edit-profit').value = data.profit;
                     document.getElementById('edit-description').value = data.description;
                     document.getElementById('edit-image-urls').value = data.images.join(', ');
 
@@ -141,6 +148,7 @@
             const name = document.getElementById('edit-name').value;
             const minPrice = document.getElementById('edit-minPrice').value;
             const maxPrice = document.getElementById('edit-maxPrice').value;
+            const profit = document.getElementById('edit-profit').value;
             const description = document.getElementById('edit-description').value;
             const imageUrls = document.getElementById('edit-image-urls').value.split(',').map(url => url.trim());
             
@@ -154,6 +162,7 @@
                     minPrice: minPrice,
                     maxPrice: maxPrice,
                     description: description,
+                    profit: profit,
                     images: imageUrls
                 })
             })
